@@ -9,7 +9,7 @@
     "prod": "node ./start.js",
     "watch": "nodemon ./start.js --ignore public/",
     "start": "concurrently \"npm run watch\" \"npm run assets\" --names \"💻,📦\" --prefix name",
-    "start:local": "NO_INTERNET=true concurrently \"npm run watch\" \"npm run assets\" --names \"💻,📦\" --prefix name",
+    "start:local": "NO_INTERNET=true concurrently \"npm run watch\" \"npm run assets\" --names \"💻,📦\" --prefix name --inspect",
     "assets": "webpack -w --display-max-modules 0",
     "sample": "node ./data/load-sample-data.js",
     "blowitallaway": "node ./data/load-sample-data.js --delete",

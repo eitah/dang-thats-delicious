@@ -63,11 +63,43 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 2);
+/******/ 	return __webpack_require__(__webpack_require__.s = 3);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+function autocomplete(input, latInput, longInput) {
+  if (!input) {
+    return;
+  }
+
+  //   const dropdown = new google.maps.places.Autocomplete(input);
+  // const dropdown = new google.maps.places.Autocomplete(input);
+  // input.bef
+  //if someone hits enter on the address field
+  input.on('keydown', function (e) {
+    if (e.keycode === 13) {
+      e.preventDefault();
+    }
+  });
+}
+
+exports.default = autocomplete;
+
+// this is an idea i have if the google maps thing is a pain
+
+var fakeDropdown = '<div\n  class="pac-container hdpi"\n  style="width: 343px; position: absolute; left: 70px; top: 740px;"\n>\n  <div class="pac-item">\n    <span class="pac-icon pac-icon-marker" />\n    <span class="pac-item-query">\n      <span class="pac-matched">Chi</span>cago\n    </span>\n    <span>IL, USA</span>\n  </div>\n  <div class="pac-item">\n    <span class="pac-icon pac-icon-marker" />\n    <span class="pac-item-query">\n      <span class="pac-matched">Chi</span>cago Heights\n    </span>\n    <span>IL, USA</span>\n  </div>\n  <div class="pac-item">\n    <span class="pac-icon pac-icon-marker" />\n    <span class="pac-item-query">\n      <span class="pac-matched">Chi</span>natown\n    </span>\n    <span>Chicago, IL, USA</span>\n  </div>\n  <div class="pac-item">\n    <span class="pac-icon pac-icon-marker" />\n    <span class="pac-item-query">\n      <span class="pac-matched">Chi</span>cago Ridge\n    </span>\n    <span>IL, USA</span>\n  </div>\n  <div class="pac-item">\n    <span class="pac-icon pac-icon-marker" />\n    <span class="pac-item-query">\n      <span class="pac-matched">Chi</span>cago Loop\n    </span>\n    <span>Chicago, IL, USA</span>\n  </div>\n</div>;\n';
+
+/***/ }),
+/* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -97,21 +129,29 @@ exports.$ = $;
 exports.$$ = $$;
 
 /***/ }),
-/* 1 */
+/* 2 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
 
 /***/ }),
-/* 2 */
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-__webpack_require__(1);
+__webpack_require__(2);
 
-var _bling = __webpack_require__(0);
+var _bling = __webpack_require__(1);
+
+var _autocomplete = __webpack_require__(0);
+
+var _autocomplete2 = _interopRequireDefault(_autocomplete);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+(0, _autocomplete2.default)((0, _bling.$)('#address'), (0, _bling.$)('#lat'), (0, _bling.$)('#lng'));
 
 /***/ })
 /******/ ]);

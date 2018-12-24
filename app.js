@@ -12,6 +12,7 @@ const expressValidator = require('express-validator');
 const routes = require('./routes/index');
 const helpers = require('./helpers');
 const errorHandlers = require('./handlers/errorHandlers');
+require('./handlers/passport');
 
 // create our Express app
 const app = express();
@@ -46,6 +47,7 @@ app.use(session({
 // // Passport JS is what we use to handle our logins
 app.use(passport.initialize());
 app.use(passport.session());
+require
 
 // // The flash middleware let's us use req.flash('error', 'Shit!'), which will then pass that message to the next page the user requests
 app.use(flash());

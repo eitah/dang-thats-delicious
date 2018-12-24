@@ -21,11 +21,13 @@ exports.validateRegister = (req, res, next) => {
   req.sanitizeBody("name");
   req.checkBody("name", "You must supply a name!").notEmpty();
   req.checkBody("email", "You must supply an Email!").isEmail();
-  req.sanitizeBody("email").normalizeEmail({
-    remove_dots: false, // this lets you use emails with extra dots
-    remove_extension: false, // gets rid of the extra bits
-    gmail_remove_subaddress: false // gets rid of extra addresses after the email
-  });
+  req
+    .sanitizeBody("email")
+    .normalizeEmail({
+      gmail_remove_dots: false, // this lets you use emails with extra dots
+      remove_extension: false, // gets rid of the extra bits
+      gmail_remove_subaddress: false // gets rid of extra addresses after the email
+    });
 
   req.checkBody("password", "Password cannot be blank").notEmpty();
   req
@@ -48,10 +50,17 @@ exports.validateRegister = (req, res, next) => {
   next(); // no errors, lets proceed!
 };
 
+exports.registerUser = async (req, res, next) => {
+  const user = new User({ email: req.body.email, name: req.body.name });
+  const register = promisify(User.register, User);
+  await register(user, req.body.password);
+  next(); // pass to authController.login};
+};
+
 exports.getAccount = (req, res) => {
   res.render("account", { title: "Edit Your Account" });
 };
-//
+
 exports.updateAccount = async (req, res) => {
   const updates = {
     name: req.body.name,

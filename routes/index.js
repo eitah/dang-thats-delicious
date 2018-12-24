@@ -9,9 +9,7 @@ const { catchErrors } = require("../handlers/errorHandlers");
 router.get("/", catchErrors(storeController.getStores));
 router.get("/stores", catchErrors(storeController.getStores));
 
-router.get("/add", 
-authController.isLoggedIn,
-storeController.addStore);
+router.get("/add", authController.isLoggedIn, storeController.addStore);
 router.post(
   "/add",
   storeController.upload,
@@ -41,22 +39,28 @@ router.post(
   "/register",
   userController.validateRegister,
   catchErrors(userController.registerUser),
-  authController.login,
+  authController.login
 );
 
-router.post('/login', authController.isLoggedIn, authController.login);
-router.get('/logout', authController.logout);
+router.post("/login", authController.login);
+router.get("/logout", authController.logout);
 
-router.get('/account', userController.getAccount);
-router.post(
-  "/account",
-  catchErrors(userController.updateAccount)
-);
+router.get("/account", userController.getAccount);
+router.post("/account", catchErrors(userController.updateAccount));
 
-// check that user is logged in
-// write and save a token and expiry to account to confirm user wants a reset.
 // email link to them
 // come back to site from the link and if token is valid may reset password
-// router.post('account/forgot', )
+router.post("/account/forgot", catchErrors(authController.forgot));
+router.get(
+  "/account/reset/:token",
+  catchErrors(authController.isResetPasswordTokenValid),
+  catchErrors(authController.reset)
+);
+router.post(
+  "/account/reset/:token",
+  authController.confirmedPasswords,
+  catchErrors(authController.isResetPasswordTokenValid),
+  catchErrors(authController.update)
+);
 
 module.exports = router;

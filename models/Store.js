@@ -12,7 +12,7 @@ const storeSchema = new mongoose.Schema({
       validator: v => {
         return slug(v).length;
       },
-      message: "Your store name is not a valid store name",
+      message: "Your store name is not a valid store name"
     }
   },
   slug: String,
@@ -62,5 +62,20 @@ storeSchema.pre("save", async function(next) {
   // todo handle cases of invalid names, maybe with regex validator?
   next();
 });
+
+// to add a custom fetcher from your mongoose schema, add it to the statics object.
+// you must use a named function to allow for a this bound to the model.
+storeSchema.statics.getTagsList = function(next) {
+  return this.aggregate([
+    { $unwind: "$tags" },
+    {
+      $group: {
+        _id: "$tags",
+        count: { $sum: 1 }
+      }
+    },
+    { $sort: { count: -1 }},
+  ]);
+};
 
 module.exports = mongoose.model("Store", storeSchema);

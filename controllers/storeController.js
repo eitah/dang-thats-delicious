@@ -34,7 +34,6 @@ exports.resize = async (req, res, next) => {
   next();
 };
 
-console.error(Object.keys(exports.upload));
 // exports.upload = multer(multerOptions).singleField("photo");
 
 exports.homePage = (req, res) => {
@@ -47,6 +46,7 @@ exports.addStore = (req, res) => {
 
 // types of flash: success warning info error
 exports.createStore = async (req, res) => {
+  req.body.author = req.user._id;
   const store = new Store(req.body);
   await store.save();
   console.log("it worked!");
@@ -64,16 +64,25 @@ exports.getStores = async (req, res) => {
 };
 
 exports.getStore = async (req, res, next) => {
-  // find the store given the slug
-  const store = await Store.findOne({ slug: req.params.slug });
+  // find the store given the slug. populate enriches data via the associated document.
+  const store = await Store.findOne({ slug: req.params.slug }).populate(
+    "author"
+  );
   if (!store) return next();
   res.render("store", { store, title: store.name });
+};
+
+const confirmOwner = (store = {}, user) => {
+  if (!store.author || !store.author.equals(user._id)) {
+    throw Error("You must own a store in order to edit it.");
+  }
 };
 
 exports.editStore = async (req, res) => {
   // find the store given the id
   const store = await Store.findOne({ _id: req.params.id });
-  // TODO confirm they are the owner of the store
+  // confirm they are the owner of the store. they are guaranteed to be logged in.
+  confirmOwner(store, req.user);
   // renders out the edit form so the user can update their store
   res.render("editStore", { title: `Edit ${store.name}`, store });
 };

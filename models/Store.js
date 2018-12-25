@@ -41,7 +41,12 @@ const storeSchema = new mongoose.Schema({
       required: "You must supply an address"
     }
   },
-  photo: String
+  photo: String,
+  author: {
+    type: mongoose.Schema.ObjectId,
+    ref: "User",
+    required: "You must supply an author"
+  }
 });
 
 // needs to be a regular function not a lambda so it can access this
@@ -55,7 +60,6 @@ storeSchema.pre("save", async function(next) {
   // find others with this slug and add a unique identifier to the slug if needed
   const slugRegex = new RegExp(`^(${this.slug})((-[0-9]*$)?)$`, "i");
   const storesWithSlug = await this.constructor.find({ slug: slugRegex });
-  console.error({ storesWithSlug });
   if (storesWithSlug.length) {
     this.slug = `${this.slug}-${storesWithSlug.length + 1}`;
   }
@@ -74,7 +78,7 @@ storeSchema.statics.getTagsList = function(next) {
         count: { $sum: 1 }
       }
     },
-    { $sort: { count: -1 }},
+    { $sort: { count: -1 } }
   ]);
 };
 

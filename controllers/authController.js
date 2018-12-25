@@ -3,7 +3,7 @@ const crypto = require("crypto");
 const mongoose = require("mongoose");
 const User = mongoose.model("User");
 const promisify = require("es6-promisify");
-
+const { send } = require('../handlers/mail');
 
 exports.login = passport.authenticate("local", {
   failureRedirect: "/login",
@@ -41,13 +41,19 @@ exports.forgot = async (req, res, next) => {
   user.resetPasswordExpires = Date.now() + 1000 * 60 * 60; // one hour
   await user.save();
   // 3. send an email with the token
-  const resetUrl = `http://${req.headers.host}/account/reset/${
+  const resetURL = `http://${req.headers.host}/account/reset/${
     user.resetPasswordToken
   }`;
+  await send({ 
+    user, 
+    subject: 'Password Reset: Your password reset for Delicious.com',
+    resetURL,
+    filename: 'password-reset', 
+  });
   // 4. redirect to login page after email has been sent
   req.flash(
     "success",
-    `You have been emailed a password reset link ${resetUrl}`
+    `You have been emailed a password reset link`
   );
   res.redirect("/login");
 };

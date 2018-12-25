@@ -49,6 +49,12 @@ const storeSchema = new mongoose.Schema({
   }
 });
 
+// define our indexes. This is a compound index on both name and description
+storeSchema.index({
+  name: "text",
+  description: "text"
+});
+
 // needs to be a regular function not a lambda so it can access this
 storeSchema.pre("save", async function(next) {
   if (!this.isModified("name")) {

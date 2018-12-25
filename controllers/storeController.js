@@ -117,3 +117,33 @@ exports.getStoresByTag = async (req, res) => {
 
   res.render("tags", { tags, stores, title: tag || "Tags", tag });
 };
+
+exports.searchStores = async (req, res) => {
+  const usersQuery = req.query.q;
+  // $text performs a text search on any field(s) indexed as text.
+  // $search is how we input the users query.
+  // Projected (2nd arg for find) lets you work with meta fields. the key is the name of the field.
+  // $meta describes important metadata, example text "textscore"
+  const stores = await Store
+  // find stores that match
+  .find(
+    {
+      $text: {
+        $search: usersQuery
+      }
+    },
+    {
+      score: {
+        $meta: "textScore"
+      }
+    }
+  )
+  // sort by match score descending
+  .sort({
+    score: { 
+      $meta: "textScore" }
+  })
+  // limit to only 5 results
+  .limit(5);
+  res.json(stores);
+};

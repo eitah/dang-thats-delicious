@@ -167,7 +167,11 @@ exports.mapStores = async (req, res) => {
 
   // filter by specific fields we care about and limit result set then return
   const stores = await Store.find(q)
-    .select("slug name description location")
+    .select("slug name description location photo")
     .limit(10);
   res.json(stores);
+};
+
+exports.mapPage = (req, res) => {
+  res.render("map", { title: "Map of Stores" });
 };

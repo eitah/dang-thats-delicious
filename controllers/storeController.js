@@ -5,6 +5,8 @@ const multer = require("multer");
 const jimp = require("jimp"); // helps load photos by reading a photo buffer
 const uuid = require("uuid"); // gives unique images for all
 
+const { icon } = require("../helpers");
+
 const multerOptions = {
   storage: multer.memoryStorage(), // read into memory, resize it, and upload it
   fileFilter(req, file, next) {
@@ -191,4 +193,20 @@ exports.heartStore = async (req, res) => {
     }
   );
   res.json(newUser);
+};
+
+exports.heartsPage = async (req, res) => {
+  const stores = await Store.find({
+    _id: { $in: req.user.hearts }
+  });
+  const noStoresHTML = `
+    <div style="text-align: center;">
+      <div class="heart__button heart__button--hearted">${
+        req.user.name
+      }! You haven't ${icon("heart")} any stores.
+      </div>
+      <strong>Try it today!</strong>
+    </div>
+  `;
+  res.render("stores", { title: "Hearted Stores", stores, noStoresHTML });
 };

@@ -8,3 +8,6 @@ block content
     .stores
         each store in stores    
             +storeCard(store)
+
+    if (!stores.length && noStoresHTML)
+        != noStoresHTML

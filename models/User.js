@@ -22,6 +22,7 @@ const userSchema = new mongoose.Schema({
   },
   resetPasswordToken: String,
   resetPasswordExpires: Date,
+  hearts: [{ type: mongoose.Schema.ObjectId, ref: "Store" }]
 });
 
 // this is to tie into the avatar everyone has on their global email prover

@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Store = mongoose.model("Store");
+const User = mongoose.model("User");
 const multer = require("multer");
 const jimp = require("jimp"); // helps load photos by reading a photo buffer
 const uuid = require("uuid"); // gives unique images for all
@@ -174,4 +175,20 @@ exports.mapStores = async (req, res) => {
 
 exports.mapPage = (req, res) => {
   res.render("map", { title: "Map of Stores" });
+};
+
+exports.heartStore = async (req, res) => {
+  // get a list of users hearts
+  const hearts = req.user.hearts.map(obj => obj.toString());
+  // determine whether to add or remove a hearted store in mongo
+  const operator = hearts.includes(req.params.id) ? "$pull" : "$addToSet";
+  const fish = await User.findById(req.user._id);
+  const newUser = await User.findOneAndUpdate(
+    req.user._id, // query
+    { [operator]: { hearts: req.params.id } }, // toggle
+    {
+      new: true // return updated user. By default it returns same user as before.
+    }
+  );
+  res.json(newUser);
 };

@@ -7,7 +7,6 @@ function ajaxHeart(e) {
   axios
     .post(this.action)
     .then(res => {
-      console.log("data", res.data);
       const heartElement = this.heart; // named elements can be accessed from the parent element
       const isHearted = heartElement.classList.toggle("heart__button--hearted");
       $(".heart-count").textContent = res.data.hearts.length; // new length of users hearts array;

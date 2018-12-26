@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 mongoose.Promise = global.Promise;
 const slug = require("slugs");
 
+/* Schema Declaration */
 // do all your data normalization close to the model as possible
 const storeSchema = new mongoose.Schema({
   name: {
@@ -49,12 +50,19 @@ const storeSchema = new mongoose.Schema({
   }
 });
 
+/* Indexes */
 // define our indexes. This is a compound index on both name and description
 storeSchema.index({
   name: "text",
   description: "text"
 });
 
+// Allows lat long to be indexed correctly.
+storeSchema.index({
+  location: "2dsphere"
+});
+
+/* Pre-Save Hooks */
 // needs to be a regular function not a lambda so it can access this
 storeSchema.pre("save", async function(next) {
   if (!this.isModified("name")) {
@@ -73,6 +81,7 @@ storeSchema.pre("save", async function(next) {
   next();
 });
 
+/* Custom Fetchers */
 // to add a custom fetcher from your mongoose schema, add it to the statics object.
 // you must use a named function to allow for a this bound to the model.
 storeSchema.statics.getTagsList = function(next) {

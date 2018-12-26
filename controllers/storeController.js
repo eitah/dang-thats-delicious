@@ -125,25 +125,49 @@ exports.searchStores = async (req, res) => {
   // Projected (2nd arg for find) lets you work with meta fields. the key is the name of the field.
   // $meta describes important metadata, example text "textscore"
   const stores = await Store
-  // find stores that match
-  .find(
-    {
-      $text: {
-        $search: usersQuery
+    // find stores that match
+    .find(
+      {
+        $text: {
+          $search: usersQuery
+        }
+      },
+      {
+        score: {
+          $meta: "textScore"
+        }
       }
-    },
-    {
+    )
+    // sort by match score descending
+    .sort({
       score: {
         $meta: "textScore"
       }
+    })
+    // limit to only 5 results
+    .limit(5);
+  res.json(stores);
+};
+
+exports.mapStores = async (req, res) => {
+  // mongodb format is [lng, lat] as numbers not strings
+  const coordinates = [req.query.lng, req.query.lat].map(parseFloat);
+
+  const q = {
+    location: {
+      $near: {
+        $geometry: {
+          type: "Point",
+          coordinates
+        },
+        $maxDistance: 10 * 1000 // in meters. 10 km
+      }
     }
-  )
-  // sort by match score descending
-  .sort({
-    score: { 
-      $meta: "textScore" }
-  })
-  // limit to only 5 results
-  .limit(5);
+  };
+
+  // filter by specific fields we care about and limit result set then return
+  const stores = await Store.find(q)
+    .select("slug name description location")
+    .limit(10);
   res.json(stores);
 };

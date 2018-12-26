@@ -9,10 +9,10 @@ const { catchErrors } = require("../handlers/errorHandlers");
 router.get("/", catchErrors(storeController.getStores));
 router.get("/stores", catchErrors(storeController.getStores));
 
-router.get("/add", authController.isLoggedIn,   storeController.addStore);
+router.get("/add", authController.isLoggedIn, storeController.addStore);
 router.post(
   "/add",
-  authController.isLoggedIn, 
+  authController.isLoggedIn,
   storeController.upload,
   catchErrors(storeController.resize),
   catchErrors(storeController.createStore)
@@ -26,7 +26,7 @@ router.post(
 
 router.get(
   "/stores/:id/edit",
-  authController.isLoggedIn, 
+  authController.isLoggedIn,
   catchErrors(storeController.editStore)
 );
 router.get("/stores/:slug", catchErrors(storeController.getStore));
@@ -72,8 +72,8 @@ router.post(
   API
 */
 
-router.get('/api/search', 
-  catchErrors(storeController.searchStores)
-);
+router.get("/api/search", catchErrors(storeController.searchStores));
+
+router.get("/api/stores/near", catchErrors(storeController.mapStores));
 
 module.exports = router;

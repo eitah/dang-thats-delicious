@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const Store = mongoose.model("Store");
 const User = mongoose.model("User");
+const Review = mongoose.model("Review");
 const multer = require("multer");
 const jimp = require("jimp"); // helps load photos by reading a photo buffer
 const uuid = require("uuid"); // gives unique images for all
@@ -37,8 +38,6 @@ exports.resize = async (req, res, next) => {
   next();
 };
 
-// exports.upload = multer(multerOptions).singleField("photo");
-
 exports.homePage = (req, res) => {
   res.render("index");
 };
@@ -60,19 +59,62 @@ exports.createStore = async (req, res) => {
   res.redirect(`/stores/${store.slug}`);
 };
 
+exports.validateReview = (req, res, next) => {
+  req.sanitizeBody("text");
+  req.checkBody("text", "You must supply a written review!").notEmpty();
+  req.checkBody("rating", "You must supply a star rating!").notEmpty();
+  req.checkBody("store", "You must supply a store");
+  const errors = req.validationErrors(); // check all of the above and put in errors;
+  if (errors) {
+    const referer = req.header("Referer") || "/";
+    req.flash("error", errors.map(err => err.msg));
+    res.redirect(referer);
+    return;
+  }
+  next(); // no errors, lets proceed!
+};
+
+exports.writeReview = async (req, res) => {
+  const review = new Review({
+    author: req.user._id,
+    store: req.body.store,
+    text: req.body.text,
+    rating: req.body.rating
+  });
+  await review.save(review);
+  req.flash(
+    "success",
+    "Review submitted successfully. Thanks for your feedback!"
+  );
+  res.redirect("back");
+};
+
+exports.getTopTenPage = async (req, res) => {
+  // query to filter by tag, or show anything with any tag at all
+
+  const top = await Review.getTopStores();
+
+  res.json(top)
+  // res.render("tags", { tags, stores, title: tag || "Tags", tag });
+};
+
 exports.getStores = async (req, res) => {
   // query the db for a list of all stores
   const stores = await Store.find();
   res.render("stores", { title: "stores", stores });
 };
 
-exports.getStore = async (req, res, next) => {
+exports.getStore = async (req, res) => {
   // find the store given the slug. populate enriches data via the associated document.
-  const store = await Store.findOne({ slug: req.params.slug }).populate(
-    "author"
-  );
-  if (!store) return next();
-  res.render("store", { store, title: store.name });
+  const store = await Store.findOne({ slug: req.params.slug });
+  if (!store) return;
+  const reviews = await Review.find({
+    store: store._id
+  })
+    .populate({ path: "author" })
+    .sort("created");
+
+  res.render("store", { store, title: store.name, reviews });
 };
 
 const confirmOwner = (store = {}, user) => {

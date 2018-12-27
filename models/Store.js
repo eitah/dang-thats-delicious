@@ -4,51 +4,63 @@ const slug = require("slugs");
 
 /* Schema Declaration */
 // do all your data normalization close to the model as possible
-const storeSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    trim: true,
-    required: "Please enter a store name!",
-    validate: {
-      validator: v => {
-        return slug(v).length;
-      },
-      message: "Your store name is not a valid store name"
-    }
-  },
-  slug: String,
-  description: {
-    type: String,
-    trim: true
-  },
-  tags: [String],
-  created: {
-    type: Date,
-    default: Date.now
-  },
-  location: {
-    type: {
+const storeSchema = new mongoose.Schema(
+  {
+    name: {
       type: String,
-      default: "Point"
-    },
-    coordinates: [
-      {
-        type: Number,
-        required: "You must supply coordinates!"
+      trim: true,
+      required: "Please enter a store name!",
+      validate: {
+        validator: v => {
+          return slug(v).length;
+        },
+        message: "Your store name is not a valid store name"
       }
-    ],
-    address: {
+    },
+    slug: String,
+    description: {
       type: String,
-      required: "You must supply an address"
+      trim: true
+    },
+    tags: [String],
+    created: {
+      type: Date,
+      default: Date.now
+    },
+    location: {
+      type: {
+        type: String,
+        default: "Point"
+      },
+      coordinates: [
+        {
+          type: Number,
+          required: "You must supply coordinates!"
+        }
+      ],
+      address: {
+        type: String,
+        required: "You must supply an address"
+      }
+    },
+    photo: String,
+    author: {
+      type: mongoose.Schema.ObjectId,
+      ref: "User",
+      required: "You must supply an author"
     }
   },
-  photo: String,
-  author: {
-    type: mongoose.Schema.ObjectId,
-    ref: "User",
-    required: "You must supply an author"
+  {
+    toObject: { virtuals: true }
   }
-});
+);
+
+// /* Virtual */
+// storeSchema.virtual("reviews", {
+//   ref: "Review",
+//   localField: "_id",
+//   foreignField: "store"
+// });
 
 /* Indexes */
 // define our indexes. This is a compound index on both name and description

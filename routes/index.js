@@ -69,8 +69,12 @@ router.post(
 );
 
 router.get("/map", storeController.mapPage);
-router.get('/hearts', authController.isLoggedIn, catchErrors(storeController.heartsPage) )
-
+router.get(
+  "/hearts",
+  authController.isLoggedIn,
+  catchErrors(storeController.heartsPage)
+);
+router.get("/top", catchErrors(storeController.getTopTenPage));
 
 /*
   API
@@ -79,6 +83,12 @@ router.get('/hearts', authController.isLoggedIn, catchErrors(storeController.hea
 router.get("/api/search", catchErrors(storeController.searchStores));
 router.get("/api/stores/near", catchErrors(storeController.mapStores));
 router.post("/api/stores/:id/heart", catchErrors(storeController.heartStore));
+router.post(
+  "/api/review",
+  authController.isLoggedIn,
+  storeController.validateReview,
+  catchErrors(storeController.writeReview)
+);
 
 /*
   API END

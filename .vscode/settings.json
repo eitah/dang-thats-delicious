@@ -8,5 +8,9 @@
     "titleBar.inactiveBackground": "#85e985"
   },
   "git.countBadge": "off",
-  "editor.snippetSuggestions": "top"
+  "editor.snippetSuggestions": "top",
+  "editor.showFoldingControls": "always",
+  "editor.folding": true,
+  "editor.foldingStrategy": "indentation",
+  "editor.fontLigatures": true,
 }

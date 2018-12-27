@@ -1,0 +1,11 @@
+mixin reviewCard(review = {})
+    .review
+        li.review__header
+            span.review__author= review.author.name
+            span.review__stars
+                .reviewer
+                    .reviewer__stars
+                        != h.icon('cog') 
+            span.review__time= h.moment(review.created).fromNow()
+        li.review__body
+            span= review.text

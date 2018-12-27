@@ -51,16 +51,10 @@ const storeSchema = new mongoose.Schema(
     }
   },
   {
-    toObject: { virtuals: true }
+    toObject: { virtuals: true },
+    toJSON: { virtuals: true }
   }
 );
-
-// /* Virtual */
-// storeSchema.virtual("reviews", {
-//   ref: "Review",
-//   localField: "_id",
-//   foreignField: "store"
-// });
 
 /* Indexes */
 // define our indexes. This is a compound index on both name and description
@@ -108,5 +102,14 @@ storeSchema.statics.getTagsList = function(next) {
     { $sort: { count: -1 } }
   ]);
 };
+
+// /* Virtual */
+// find reviews where the stores id is equal to the store property.
+// this populates data about another model in relation to the current one
+storeSchema.virtual("reviews", {
+  ref: "Review", // what model to link
+  localField: "_id", // which field on the store
+  foreignField: "store" // which field on the review
+});
 
 module.exports = mongoose.model("Store", storeSchema);

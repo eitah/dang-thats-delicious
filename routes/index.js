@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const storeController = require("../controllers/storeController");
 const userController = require("../controllers/userController");
+const reviewController = require("../controllers/reviewController");
 const authController = require("../controllers/authController");
 
 const { catchErrors } = require("../handlers/errorHandlers");
@@ -29,7 +30,7 @@ router.get(
   authController.isLoggedIn,
   catchErrors(storeController.editStore)
 );
-router.get("/stores/:slug", catchErrors(storeController.getStore));
+router.get("/stores/:slug", catchErrors(storeController.getStoreBySlug));
 
 router.get("/tags", catchErrors(storeController.getStoresByTag));
 router.get("/tags/:tag", catchErrors(storeController.getStoresByTag));
@@ -84,10 +85,10 @@ router.get("/api/search", catchErrors(storeController.searchStores));
 router.get("/api/stores/near", catchErrors(storeController.mapStores));
 router.post("/api/stores/:id/heart", catchErrors(storeController.heartStore));
 router.post(
-  "/api/review",
+  "/api/review/:store",
   authController.isLoggedIn,
-  storeController.validateReview,
-  catchErrors(storeController.writeReview)
+  reviewController.validateReview,
+  catchErrors(reviewController.writeReview)
 );
 
 /*

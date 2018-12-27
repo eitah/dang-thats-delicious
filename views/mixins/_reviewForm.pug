@@ -1,20 +1,13 @@
 mixin reviewForm(review = {})
     if (user)
-        form.reviewer(action="/api/review" method="POST")
+        form.reviewer(action=`/api/review/${store._id}` method="POST")
             textarea(name="text" placeholder="Did you try this place? Have something to say? Leave a Review...")
             .reviewer__meta
                 .reviewer__stars
                     input(type="hidden" name="store" value=store._id)
-                    input(name="rating" id="star5" value="5" type="radio")
-                    label(for="star5")
-                    input(name="rating" id="star4" value="4" type="radio")
-                    label(for="star4")
-                    input(name="rating" id="star3" value="3" type="radio")
-                    label(for="star3")
-                    input(name="rating" id="star2" value="2" type="radio")
-                    label(for="star2")
-                    input(name="rating" id="star1" value="1" type="radio")
-                    label(for="star1")
+                    each num in [5,4,3,2,1]
+                        input(id=`star${num}` name="rating" value=num type="radio" required)
+                        label(for=`star${num}`) #{num} Stars
                 input(type="submit" value="Submit Review →" class="button")
     else
         p.love  Love this place? <a href="/login">Login</a> to leave a review!

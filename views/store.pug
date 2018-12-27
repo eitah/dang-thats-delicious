@@ -25,6 +25,8 @@ block content
 
         
         +reviewForm()
-        //- pre= h.dump(store.reviews)
-        each review in reviews
-            +reviewCard(review)
+
+        if store.reviews
+            each review in store.reviews
+                .review
+                    +reviewCard(review)

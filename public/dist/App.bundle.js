@@ -962,16 +962,21 @@ process.umask = function () {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-function autocomplete(input, latInput, longInput) {
+function autocomplete(input, latInput, lngInput) {
   if (!input) {
-    return;
+    return; // bye...
   }
 
-  //   const dropdown = new google.maps.places.Autocomplete(input);
-  // const dropdown = new google.maps.places.Autocomplete(input);
-  // input.bef
-  //if someone hits enter on the address field
-  input.on('keydown', function (e) {
+  var dropdown = new google.maps.places.Autocomplete(input);
+
+  dropdown.addListener("place_changed", function () {
+    var place = dropdown.getPlace();
+    latInput.value = place.geometry.location.lat();
+    lngInput.value = place.geometry.location.lng();
+  });
+
+  // if someone hits enter on the address field don't submit the form
+  input.on("keydown", function (e) {
     if (e.keycode === 13) {
       e.preventDefault();
     }
@@ -979,10 +984,6 @@ function autocomplete(input, latInput, longInput) {
 }
 
 exports.default = autocomplete;
-
-// this is an idea i have if the google maps thing is a pain
-
-var fakeDropdown = '<div\n  class="pac-container hdpi"\n  style="width: 343px; position: absolute; left: 70px; top: 740px;"\n>\n  <div class="pac-item">\n    <span class="pac-icon pac-icon-marker" />\n    <span class="pac-item-query">\n      <span class="pac-matched">Chi</span>cago\n    </span>\n    <span>IL, USA</span>\n  </div>\n  <div class="pac-item">\n    <span class="pac-icon pac-icon-marker" />\n    <span class="pac-item-query">\n      <span class="pac-matched">Chi</span>cago Heights\n    </span>\n    <span>IL, USA</span>\n  </div>\n  <div class="pac-item">\n    <span class="pac-icon pac-icon-marker" />\n    <span class="pac-item-query">\n      <span class="pac-matched">Chi</span>natown\n    </span>\n    <span>Chicago, IL, USA</span>\n  </div>\n  <div class="pac-item">\n    <span class="pac-icon pac-icon-marker" />\n    <span class="pac-item-query">\n      <span class="pac-matched">Chi</span>cago Ridge\n    </span>\n    <span>IL, USA</span>\n  </div>\n  <div class="pac-item">\n    <span class="pac-icon pac-icon-marker" />\n    <span class="pac-item-query">\n      <span class="pac-matched">Chi</span>cago Loop\n    </span>\n    <span>Chicago, IL, USA</span>\n  </div>\n</div>;\n';
 
 /***/ }),
 /* 11 */

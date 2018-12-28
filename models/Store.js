@@ -68,6 +68,14 @@ storeSchema.index({
   location: "2dsphere"
 });
 
+function autoPopulate(next) {
+  this.populate("reviews author");
+  next();
+}
+
+storeSchema.pre("find", autoPopulate);
+storeSchema.pre("findOne", autoPopulate);
+
 /* Pre-Save Hooks */
 // needs to be a regular function not a lambda so it can access this
 storeSchema.pre("save", async function(next) {
@@ -100,6 +108,40 @@ storeSchema.statics.getTagsList = function(next) {
       }
     },
     { $sort: { count: -1 } }
+  ]);
+};
+
+storeSchema.statics.getTopStores = function() {
+  return this.aggregate([
+    // lookup stores and populate their reviews
+    {
+      $lookup: {
+        from: "reviews", // this wrecked me. apparently mongodb lower cases and adds an s automatically to your ref
+        localField: "_id",
+        foreignField: "store",
+        as: "reviews"
+      }
+    },
+    // filter for items with 2 or more reviews
+    {
+      $match: {
+        "reviews.1": {
+          //reviews.1 means the second element of the reviews array. weird, no?
+          $exists: true
+        }
+      }
+    },
+    // add average rating field
+    {
+      $addFields: {
+        averageRating: {
+          $avg: "$reviews.rating"
+        }
+      }
+    },
+    //sort highest reviews first
+    { $sort: { averageRating: -1 } },
+    { $limit: 10 }
   ]);
 };
 

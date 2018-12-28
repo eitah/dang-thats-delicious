@@ -60,12 +60,8 @@ exports.createStore = async (req, res) => {
 };
 
 exports.getTopTenPage = async (req, res) => {
-  // query to filter by tag, or show anything with any tag at all
-
-  const top = await Review.getTopStores();
-
-  res.json(top);
-  // res.render("tags", { tags, stores, title: tag || "Tags", tag });
+  const stores = await Store.getTopStores(); // beasly query but good.
+  res.render("topStores", { stores, title: `Top ${stores.length} Stores` });
 };
 
 exports.getStores = async (req, res) => {
@@ -76,9 +72,7 @@ exports.getStores = async (req, res) => {
 
 exports.getStoreBySlug = async (req, res) => {
   // find the store given the slug. populate enriches data via the associated document.
-  const store = await Store.findOne({ slug: req.params.slug }).populate(
-    "author reviews"
-  );
+  const store = await Store.findOne({ slug: req.params.slug });
   if (!store) return;
   res.render("store", { store, title: store.name });
 };

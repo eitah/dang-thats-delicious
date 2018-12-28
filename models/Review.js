@@ -37,19 +37,4 @@ function autoPopulate(next) {
 reviewSchema.pre("find", autoPopulate);
 reviewSchema.pre("findOne", autoPopulate);
 
-/* Custom Fetchers */
-// to add a custom fetcher from your mongoose schema, add it to the statics object.
-// you must use a named function to allow for a this bound to the model.
-reviewSchema.statics.getTopStores = function(next) {
-  return this.aggregate([
-    {
-      $group: {
-        _id: "$store",
-        count: { $sum: 1 }
-      }
-    },
-    { $sort: { count: -1 } }
-  ]).limit(10);
-};
-
 module.exports = mongoose.model("Review", reviewSchema);

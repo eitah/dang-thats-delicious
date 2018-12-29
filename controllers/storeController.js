@@ -67,7 +67,7 @@ exports.getTopTenPage = async (req, res) => {
 exports.getStores = async (req, res) => {
   // query the db for a list of all stores
   const page = req.params.page || 1;
-  const limit = 5;
+  const limit = 4;
   const skip = page * limit - limit; // 1 * 4 - 4 = 0; p2 * 4 - 4 = 4;
   const storesPromise = Store.find()
     .skip(skip)
